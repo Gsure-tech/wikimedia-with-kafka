@@ -1,10 +1,14 @@
 package com.gsuretech;
 
 
+import com.launchdarkly.eventsource.EventHandler;
+import com.launchdarkly.eventsource.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
 
 @Service
 public class WikimediaChangesProducer {
@@ -20,6 +24,13 @@ public class WikimediaChangesProducer {
 
         String topic = "wikimedia_recentchange";
 
-        // to read real time stream data from wikimedia, we use eventsouurce
+        // to read real time stream data from wikimedia, we use eventsource
+
+        EventHandler eventHandler = new WikimediaChangesHandler(kafkaTemplate, topic);
+        String url= "https://stream.wikimedia.org/v2/stream/recentchange";
+
+        EventSource.Builder builder = new EventSource.Builder(eventHandler, URI.create(url));
+        EventSource eventSource = builder.build();
+
     }
 }
