@@ -9,6 +9,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class WikimediaChangesProducer {
@@ -20,7 +21,7 @@ public class WikimediaChangesProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendMessage(){
+    public void sendMessage() throws InterruptedException {
 
         String topic = "wikimedia_recentchange";
 
@@ -31,6 +32,8 @@ public class WikimediaChangesProducer {
 
         EventSource.Builder builder = new EventSource.Builder(eventHandler, URI.create(url));
         EventSource eventSource = builder.build();
+        eventSource.start();
 
+        TimeUnit.MINUTES.sleep(10);
     }
 }
